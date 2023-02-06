@@ -14,3 +14,5 @@ curl -u hung:pass1234 -v -s "http://localhost:8080/api/currencyname?code=hkd"
 
 * https://spring.io/guides/gs/consuming-web-service/
 * https://spring.io/guides/gs/producing-web-service/
+
+
