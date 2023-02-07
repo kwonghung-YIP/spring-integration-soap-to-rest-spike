@@ -2,4 +2,4 @@
 .project
 /spring-integration-soap-spike.iml
 /jmeter.log
-
+/modules/mock-soap-service/

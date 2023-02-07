@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.Gateway;
 import org.springframework.integration.annotation.MessagingGateway;
+import org.springframework.integration.channel.interceptor.MessageSelectingInterceptor;
 import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
@@ -13,6 +14,8 @@ import org.springframework.integration.ws.dsl.Ws;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.messaging.support.ChannelInterceptorAdapter;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 import lombok.extern.slf4j.Slf4j;
@@ -98,7 +101,7 @@ public class IntegrationFlowConfig {
                 //.handle(Ws.simpleOutboundGateway().uri("http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso"))
                 .log()
                 .handle(
-                	Ws.marshallingOutboundGateway()
+            		Ws.marshallingOutboundGateway()
                 	  .uri("http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso")
                 	  .marshaller(jaxb2Marshaller)
                 	  .unmarshaller(jaxb2Marshaller)
@@ -106,7 +109,24 @@ public class IntegrationFlowConfig {
                 .log()
                 .<CurrencyNameResponse,String>transform((response) -> response.getCurrencyNameResult())
                 .channel(currencyNameReply())
+                .intercept(new ChannelInterceptor() {
+
+					@Override
+					public Message<?> preSend(Message<?> message, MessageChannel channel) {
+						log.info("preSend message in channel {}",channel);
+						if (Math.random() > 0.7) {
+							throw new MyException();
+						} else {
+							return message;
+						}
+					}
+                	
+                })
                 .get();
+    }
+    
+    static public class MyException extends RuntimeException {
+    	
     }
 
 }

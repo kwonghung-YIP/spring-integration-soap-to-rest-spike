@@ -2,7 +2,9 @@ package poc.restToSoap.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.trace.http.HttpTrace.Principal;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
 import poc.restToSoap.integration.IntegrationFlowConfig.GatewayAsFunction;
+import poc.restToSoap.integration.IntegrationFlowConfig.MyException;
 import poc.restToSoap.svc.DelegatedService;
 
 @Slf4j
@@ -41,5 +44,11 @@ public class SimpleRestController {
         log.info("incoming request {}",currencyCode);
         return gateway.getCurrencyName(currencyCode);
     }
+    
+    @ExceptionHandler
+    public ResponseEntity<String> handleException(MyException e) {
+    	return ResponseEntity.badRequest().body("catch MyException");
+    }
+    
 
 }
