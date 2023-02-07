@@ -1,6 +1,8 @@
 package poc.restToSoap.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.trace.http.HttpTrace.Principal;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,7 +37,7 @@ public class SimpleRestController {
     }
 
     @GetMapping("/currencyname")
-    public String getCurrencyName(@RequestParam(name="code") String currencyCode) {
+    public String getCurrencyName(@RequestParam(name="code") String currencyCode,Principal principal) {
         log.info("incoming request {}",currencyCode);
         return gateway.getCurrencyName(currencyCode);
     }
